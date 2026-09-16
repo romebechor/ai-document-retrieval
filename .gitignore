@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+docs/Jeen_AI_Solution_Assignment.pdf
+docs/empty.docx
+docs/empty.pdf
+docs/test.docx
+docs/test.txt
