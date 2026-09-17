@@ -51,8 +51,21 @@ def ensure_schema(conn):
 
 
 def insert_chunks(conn, filename: str, split_strategy: str, chunks: list[str], embeddings: list[list[float]]):
-    """Insert chunk rows in a single transaction."""
+    """
+    Insert chunk rows in a single transaction.
+
+    Re-indexing the same file with the same strategy replaces its previous
+    chunks instead of duplicating them, so running the tool twice on the
+    same file is safe and idempotent.
+    """
     with conn.cursor() as cur:
+        cur.execute(
+            """
+            DELETE FROM document_chunks
+            WHERE filename = %s AND split_strategy = %s;
+            """,
+            (filename, split_strategy),
+        )
         for chunk_text, embedding in zip(chunks, embeddings):
             cur.execute(
                 """
